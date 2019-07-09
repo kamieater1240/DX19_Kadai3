@@ -9,9 +9,11 @@ void animationDraw();
 
 typedef struct runner {
 	float dx, dy;
-	float speed;
+	float speedx, speedy;
+	int id;
 	int playSpeed;
 	bool faceRight;
+	float scaleX, scaleY;
 };
 
 #endif // !ANIMATION_H_

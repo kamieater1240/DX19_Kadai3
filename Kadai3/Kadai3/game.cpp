@@ -5,6 +5,8 @@
 #include "main.h"
 #include "mydirect3d.h"
 #include "animation.h"
+#include "sprite.h"
+#include "texture.h"
 #include "input.h"
 #include "system_timer.h"
 #include "debug_font.h"
@@ -15,15 +17,34 @@ double g_FPSBaseTime;			//FPS計測用時間
 float g_FPS;					//FPS
 
 //BackGround vertices
-Vertex2d sportsField[] = {
-	{D3DXVECTOR4(		 0.0f,        450.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
-	{D3DXVECTOR4(SCREEN_WIDTH,        450.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
-	{D3DXVECTOR4(		 0.0f, SCREEN_HEIGHT, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
-	{D3DXVECTOR4(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)}
+Vertex2d sportsField[2][4] = {
+	//Bottom Field
+	{
+		{D3DXVECTOR4(		 0.0f,        455.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
+		{D3DXVECTOR4(SCREEN_WIDTH,        455.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
+		{D3DXVECTOR4(		 0.0f, SCREEN_HEIGHT, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
+		{D3DXVECTOR4(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)}
+	},
+
+	//Up Field
+	{
+		{D3DXVECTOR4(		 0.0f, 295.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
+		{D3DXVECTOR4(SCREEN_WIDTH, 295.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
+		{D3DXVECTOR4(		 0.0f, 345.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)},
+		{D3DXVECTOR4(SCREEN_WIDTH, 345.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(194, 69, 45, 255)}
+	}
+};
+
+//Grass Field
+Vertex2d grassField[] = {
+	{D3DXVECTOR4(0.0f, 350.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 104, 10, 255)},
+	{D3DXVECTOR4(SCREEN_WIDTH, 350.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 104, 10, 255)},
+	{D3DXVECTOR4(0.0f, 449.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 104, 10, 255)},
+	{D3DXVECTOR4(SCREEN_WIDTH, 449.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 104, 10, 255)}
 };
 
 //Track Lines
-Vertex2d trackLines[6][4] = {
+Vertex2d trackLines[8][4] = {
 	//Line 1
 	{
 		{D3DXVECTOR4(0.0f, 450.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 450.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)},
@@ -58,7 +79,51 @@ Vertex2d trackLines[6][4] = {
 	{
 		{D3DXVECTOR4(0.0f, 715.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 715.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)},
 		{D3DXVECTOR4(0.0f, 720.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 720.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}
+	},
+
+	//Line 7
+	{
+		{D3DXVECTOR4(0.0f, 290.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 290.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)},
+		{D3DXVECTOR4(0.0f, 295.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 295.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}
+	},
+
+	//Line 8
+	{
+		{D3DXVECTOR4(0.0f, 345.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 345.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)},
+		{D3DXVECTOR4(0.0f, 350.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 350.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}
 	}
+};
+
+//Far Track Lines
+Vertex2d farTrackLines[4][2] = {
+	//Line 1
+	{
+		{D3DXVECTOR4(0.0f, 305.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 305.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}
+	},
+
+	//Line 2
+	{
+		{D3DXVECTOR4(0.0f, 315.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 315.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}
+	},
+	
+	//Line 3
+	{
+		{D3DXVECTOR4(0.0f, 325.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 325.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}
+	},
+	
+	//Line 4
+	{
+		{D3DXVECTOR4(0.0f, 335.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}, {D3DXVECTOR4(SCREEN_WIDTH, 335.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 255, 255)}
+	}
+
+};
+
+//Black Cover
+Vertex2d blackCover[] = {
+	{D3DXVECTOR4(		 0.0f,			0.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 0, 0, 255)},
+	{D3DXVECTOR4(SCREEN_WIDTH,			0.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 0, 0, 255)},
+	{D3DXVECTOR4(		 0.0f, SCREEN_HEIGHT, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 0, 0, 255)},
+	{D3DXVECTOR4(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 1.0f), D3DCOLOR_RGBA(0, 0, 0, 255)}
 };
 
 void gameInit() {
@@ -84,6 +149,8 @@ void gameInit() {
 	myDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	animationInit();
+	Texture_SetLoadFile("Asset/Texture/endSign.png", 720, 720);		//ID 6
+	Texture_Load();
 }
 
 void gameUninit() {
@@ -107,12 +174,29 @@ void gameUpdate() {
 void gameDraw() {
 	LPDIRECT3DDEVICE9 myDevice = MyDirect3D_GetDevice();
 	
-	//Draw field
-	myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sportsField, sizeof(Vertex2d));
-	for (int i = 0; i < 6; i++) {
-		myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, trackLines[i], sizeof(Vertex2d));
+	if (g_FrameCount < 1550) {
+		//Draw field
+		for (int i = 0; i < 2; i++) {
+			myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sportsField[i], sizeof(Vertex2d));
+		}
+		myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, grassField, sizeof(Vertex2d));
+
+		//Draw track lines
+		for (int i = 0; i < 8; i++) {
+			myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, trackLines[i], sizeof(Vertex2d));
+		}
+		for (int i = 0; i < 4; i++) {
+			myDevice->DrawPrimitiveUP(D3DPT_LINELIST, 2, farTrackLines[i], sizeof(Vertex2d));
+		}
+
+		animationDraw();
 	}
 
-	animationDraw();
+	if (g_FrameCount >= 1550) {
+		myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, blackCover, sizeof(Vertex2d));
+
+		if (g_FrameCount > 1600)
+			Sprite_Draw(6, 640, 360);
+	}
 
 }

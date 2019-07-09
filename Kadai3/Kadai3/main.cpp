@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <time.h> 
 #include "main.h"
 #include "mydirect3d.h"
 #include "texture.h"
@@ -122,6 +123,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 bool Init(HWND hWnd) {
 
+	srand((unsigned)time(NULL));
+
 	MyDirect3D_Init(hWnd);
 	myDevice = MyDirect3D_GetDevice();
 
@@ -146,7 +149,7 @@ void Update(void) {
 
 void Draw(void) {
 	//画面のクリア,           　　　　 クリアしたいターゲット　　　　　　　　　　色　　　　　　　　　　　　　Z　　ステンシル
-	myDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(152, 251, 152, 255), 1.0f, 0);
+	myDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(135, 206, 235, 255), 1.0f, 0);
 
 	//ポリゴン描画 1.頂点構造体を作ります　2.デバイスに頂点の形を伝えるためのFVFを宣言する
 	//3.頂点データを作る　

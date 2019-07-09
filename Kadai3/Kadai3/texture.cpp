@@ -12,6 +12,8 @@ void Texture_Init() {
 		g_TextureData[i].filename[0] = '\0';
 		g_TextureData[i].pTexture = NULL;
 	}
+
+
 }
 
 int Texture_SetLoadFile(const char* pFileName, int width, int height) {

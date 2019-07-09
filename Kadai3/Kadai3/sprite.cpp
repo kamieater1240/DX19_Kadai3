@@ -128,6 +128,7 @@ void Sprite_Draw(int textureID, float dx, float dy, int cut_x, int cut_y, int cu
 	pDevice->SetTexture(0, NULL);
 }
 
+//Cut, Rotating Method
 void Sprite_Draw(int textureID, float dx, float dy, int cut_x, int cut_y, int cut_w, int cut_h, float centerX, float centerY, float angle) {
 	int width = Texture_GetWidth(textureID);
 	int height = Texture_GetHeight(textureID);
@@ -162,6 +163,47 @@ void Sprite_Draw(int textureID, float dx, float dy, int cut_x, int cut_y, int cu
 	//					出力				入力
 	for (int i = 0; i < 4; i++) {
 		D3DXVec4Transform(&v[i].position, &v[i].position, &mtxW);
+	}
+
+	pDevice->SetFVF(FVF_VERTEX2D);
+	pDevice->SetTexture(0, Texture_GetTexture(textureID));
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(Vertex2d));
+	pDevice->SetTexture(0, NULL);
+}
+
+//Cut, Scaling Method
+void Sprite_Draw(int textureID, float dx, float dy, int cut_x, int cut_y, int cut_w, int cut_h, float scaleX, float scaleY) {
+	int width = Texture_GetWidth(textureID);
+	int height = Texture_GetHeight(textureID);
+	float u0 = cut_x / (float)width;
+	float v0 = cut_y / (float)height;
+	float u1 = (cut_x + cut_w) / (float)width;
+	float v1 = (cut_y + cut_h) / (float)height;
+
+	Vertex2d v[] = {
+		{D3DXVECTOR4(dx - cut_w / 2, dy - cut_h / 2, 0.0f, 1.0f), g_Color, D3DXVECTOR2(u0, v0)},
+		{D3DXVECTOR4(dx + cut_w / 2, dy - cut_h / 2, 0.0f, 1.0f), g_Color, D3DXVECTOR2(u1, v0)},
+		{D3DXVECTOR4(dx - cut_w / 2, dy + cut_h / 2, 0.0f, 1.0f), g_Color, D3DXVECTOR2(u0, v1)},
+		{D3DXVECTOR4(dx + cut_w / 2, dy + cut_h / 2, 0.0f, 1.0f), g_Color, D3DXVECTOR2(u1, v1)},
+	};
+
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
+
+	//変数宣言
+	D3DXMATRIX mtxR, mtxS, mtxT, mtxIT, mtxW;
+	//変数に関数を使用して値を代入する
+	D3DXMatrixScaling(&mtxS, scaleX, scaleY, 1.0f);
+
+	//平移矩陣
+	/*D3DXMatrixTranslation(&mtxT, -centerX, -centerY, 0.0f);
+	D3DXMatrixTranslation(&mtxIT, centerX, centerY, 0.0f);*/
+
+	//mtxW = mtxT * mtxR * mtxS * mtxIT;
+	//座標変換する
+	//D3DXVec4Transform(&v[0].position, &v[0].position, &mtrxR);
+	//					出力				入力
+	for (int i = 0; i < 4; i++) {
+		D3DXVec4Transform(&v[i].position, &v[i].position, &mtxS);
 	}
 
 	pDevice->SetFVF(FVF_VERTEX2D);

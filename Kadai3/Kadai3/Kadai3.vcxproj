@@ -132,6 +132,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mydirect3d.cpp" />
+    <ClCompile Include="polygons.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="SpriteAnim.cpp" />
     <ClCompile Include="system_timer.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="mydirect3d.h" />
+    <ClInclude Include="polygons.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="SpriteAnim.h" />
     <ClInclude Include="system_timer.h" />
