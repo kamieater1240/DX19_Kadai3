@@ -17,6 +17,14 @@ double g_FPSBaseTime;			//FPS計測用時間
 float g_FPS;					//FPS
 
 //BackGround vertices
+Vertex2d BackGround[] = {
+	{D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 0, 0, 255)},
+	{D3DXVECTOR4(SCREEN_WIDTH, 0.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 0, 0, 255)},
+	{D3DXVECTOR4(0.0f, 305.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 0, 255)},
+	{D3DXVECTOR4(SCREEN_WIDTH, 305.0f, 0.0f, 1.0f), D3DCOLOR_RGBA(255, 255, 0, 255)}
+};
+
+//Sports Field vertices
 Vertex2d sportsField[2][4] = {
 	//Bottom Field
 	{
@@ -174,7 +182,10 @@ void gameUpdate() {
 void gameDraw() {
 	LPDIRECT3DDEVICE9 myDevice = MyDirect3D_GetDevice();
 	
-	if (g_FrameCount < 1550) {
+	if (g_FrameCount < 1750) {
+		//Draw BackGround
+		myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, BackGround, sizeof(Vertex2d));
+
 		//Draw field
 		for (int i = 0; i < 2; i++) {
 			myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sportsField[i], sizeof(Vertex2d));
@@ -192,10 +203,10 @@ void gameDraw() {
 		animationDraw();
 	}
 
-	if (g_FrameCount >= 1550) {
+	if (g_FrameCount >= 1750) {
 		myDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, blackCover, sizeof(Vertex2d));
 
-		if (g_FrameCount > 1600)
+		if (g_FrameCount > 1800)
 			Sprite_Draw(6, 640, 360);
 	}
 

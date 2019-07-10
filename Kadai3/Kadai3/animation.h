@@ -10,6 +10,7 @@ void animationDraw();
 typedef struct runner {
 	float dx, dy;
 	float speedx, speedy;
+	float angle;
 	int id;
 	int playSpeed;
 	bool faceRight;
