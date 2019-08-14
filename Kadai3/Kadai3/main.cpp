@@ -19,6 +19,9 @@
 
 LPDIRECT3DDEVICE9 myDevice;
 double g_StaticFrameTime = 0.0;
+ID3DXMesh* Teapot = 0;
+const int Width = 640;
+const int Height = 480;
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -121,6 +124,48 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
+bool Setup()
+{
+	myDevice = MyDirect3D_GetDevice();
+	//
+	// Create the teapot geometry.
+	//
+
+	D3DXCreateTeapot(myDevice, &Teapot, 0);
+
+	//
+	// Position and aim the camera.
+	//
+
+	D3DXVECTOR3 position(0.0f, 0.0f, -3.0f);
+	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	D3DXMATRIX V;
+	D3DXMatrixLookAtLH(&V, &position, &target, &up);
+	myDevice->SetTransform(D3DTS_VIEW, &V);
+
+	//
+	// Set projection matrix.
+	//
+
+	D3DXMATRIX proj;
+	D3DXMatrixPerspectiveFovLH(
+		&proj,
+		D3DX_PI * 0.5f, // 90 - degree
+		(float)Width / (float)Height,
+		1.0f,
+		1000.0f);
+	myDevice->SetTransform(D3DTS_PROJECTION, &proj);
+
+	//
+	// Switch to wireframe mode.
+	//
+
+	myDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+
+	return true;
+}
+
 bool Init(HWND hWnd) {
 
 	srand((unsigned)time(NULL));
@@ -128,7 +173,9 @@ bool Init(HWND hWnd) {
 	MyDirect3D_Init(hWnd);
 	myDevice = MyDirect3D_GetDevice();
 
-	gameInit();
+	Setup();
+
+	//gameInit();
 
 	return true;
 }
@@ -141,15 +188,19 @@ void Uninit(void) {
 
 void Update(void) {
 
-	SpriteAnim_Update();
-	Keyboard_Update();
+	//SpriteAnim_Update();
+	//Keyboard_Update();
 
-	gameUpdate();
+	//gameUpdate();
 }
 
 void Draw(void) {
+
 	//画面のクリア,           　　　　 クリアしたいターゲット　　　　　　　　　　色　　　　　　　　　　　　　Z　　ステンシル
 	myDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(135, 206, 235, 255), 1.0f, 0);
+
+	//ID3DXMesh *mesh = 0;
+	//D3DXCreateTeapot(myDevice, &mesh, 0);
 
 	//ポリゴン描画 1.頂点構造体を作ります　2.デバイスに頂点の形を伝えるためのFVFを宣言する
 	//3.頂点データを作る　
@@ -157,9 +208,13 @@ void Draw(void) {
 	myDevice->BeginScene();	//BeginScene後一定要接EndScene
 	myDevice->SetFVF(FVF_VERTEX2D);
 
-	gameDraw();
+	Teapot->DrawSubset(0);
+
+	//gameDraw();
 
 	myDevice->EndScene();		//在Call下一個BeginScene之前一定要接EndScene
 	myDevice->Present(NULL, NULL, NULL, NULL);
 
+	//mesh->Release();
+	//mesh = 0;
 }
